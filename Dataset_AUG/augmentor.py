@@ -47,7 +47,7 @@ class marian_loader():
         label=[]
 
         for i in range(len(data)):
-            
+            print(i)
             
             flow_forw=data['Offense'].iloc[i]
 

@@ -4,27 +4,42 @@ import torch.optim as optim
 from torch.utils.data import Dataset
 from transformers import BertTokenizer, BertModel
 
-def tokenize_texts(texts,tokenizer,max_len=32):
-    return tokenizer(texts, padding='max_length', truncation=True, max_length=max_len, return_tensors='pt')
 
 
 class TextDataset(Dataset):
-    def __init__(self, texts_arr, labels):
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        
-        tokenized_inputs=tokenize_texts(texts_arr,self.tokenizer)
-        self.input_ids = tokenized_inputs['input_ids']
-        self.attention_mask = tokenized_inputs['attention_mask']
-        self.labels = torch.tensor(labels, dtype=torch.long)
-    
+    def __init__(self, texts, labels, tokenizer, max_len=128):
+        self.texts = texts
+        self.labels = labels
+        self.tokenizer = tokenizer
+        self.max_len = max_len
+
     def __len__(self):
-        return len(self.labels)
-    
+        return len(self.texts)
+
     def __getitem__(self, idx):
-        return {'input_ids': self.input_ids[idx],'attention_mask': self.attention_mask[idx],'labels': self.labels[idx]}
+        text = self.texts[idx]
+        label = self.labels[idx]
+
+        encoding = self.tokenizer.encode_plus(
+            text,
+            add_special_tokens=True,
+            max_length=self.max_len,
+            padding='max_length',
+            truncation=True,
+            return_tensors='pt'
+        )
+        
+        input_ids = encoding['input_ids'].squeeze()
+        attention_mask = encoding['attention_mask'].squeeze()
+        
+        return {
+            'input_ids': input_ids,
+            'attention_mask': attention_mask,
+            'labels': torch.tensor(label, dtype=torch.long)
+        }
     
 
-
+### just for backup otherwise we will be using bert_based_uncased directly
 class BERTLSTMClassifier(nn.Module):
     def __init__(self,hidden_dim, output_dim):
         super(BERTLSTMClassifier, self).__init__()
@@ -42,24 +57,28 @@ class BERTLSTMClassifier(nn.Module):
         return output
     
 
-def train(model,data,optimizer,criterion,epochs=5):
-    model.train()
-    for ep in range(epochs):
-        for temp in data:
-            input_ids = temp['input_ids']
-            attention_mask = temp['attention_mask']
-            labels = temp['labels']
 
-            out=model(input_ids,attention_mask)
 
-            loss=criterion(labels,out)
 
+def train(model,device,train_loader,optimizer,num_epochs=5):
+    num_epochs = 3
+
+    for epoch in range(num_epochs):
+        model.train()
+        running_loss = 0.0
+        for batch in (train_loader):
+            input_ids = batch['input_ids'].to(device)
+            attention_mask = batch['attention_mask'].to(device)
+            labels = batch['labels'].to(device)
+            
             optimizer.zero_grad()
-
+            outputs = model(input_ids=input_ids,attention_mask=attention_mask,labels=labels)
+            loss = outputs.loss
             loss.backward()
             optimizer.step()
-
-        print(f"Epoch {ep + 1}/{epochs}, Loss: {loss.item()}")
+            running_loss += loss.item()
+        
+        print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(train_loader):.4f}") 
 
         
 
