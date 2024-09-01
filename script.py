@@ -1,3 +1,8 @@
+print("############ Welcome to Gangsters Paradise ############ \n")
+
+print("                     Ayush Pareek ")
+print("                     02-09-2024 \n \n")
+
 
 import torch
 from transformers import BertTokenizer
@@ -8,7 +13,34 @@ import warnings
 
 warnings.filterwarnings("ignore") ## otherwise we will get alot of warning while loading our model 
 
-##same function which is in backend.py 
+path=str(input("Enter path to the trained model in torch format"))
+model = torch.load(path)
+
+print("Model Loaded \n")
+
+print("Loading Bert tokenizer")
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+print("Bert tokenizer Loaded Successfully!.. \n")
+
+print("Enter path for Mapping and Punishment Json files")
+MP=str(input("Mapping"))
+PP=str(input("Punishment \n"))
+
+with open(MP, 'r') as file:
+    MD = json.load(file)
+
+
+with open(PP, 'r') as File:
+    PD= json.load(File)
+
+
+
+offense=str(input("Enter the Description of offense happened \n"))
+off=[]
+off.append(offense)
+lab=[0]
+
+### same class which was in backend ####
 class TextDataset(Dataset):
     def __init__(self, texts, labels, tokenizer, max_len=128):
         self.texts = texts
@@ -40,42 +72,8 @@ class TextDataset(Dataset):
             'attention_mask': attention_mask,
             'labels': torch.tensor(label, dtype=torch.long)
         }
-## you can expand it if you want 
-
-print("############ Welcome to Gangsters Paradise ############ \n")
-
-print("                     Ayush Pareek ")
-print("                     02-09-2024 \n \n")
 
 
-
-
-path=str(input("Enter path to the trained model in torch format"))
-model = torch.load(path)
-
-print("Model Loaded \n")
-
-print("Loading Bert tokenizer")
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-print("Bert tokenizer Loaded Successfully!.. \n")
-
-print("Enter path for Mapping and Punishment Json files")
-MP=str(input("Mapping"))
-PP=str(input("Punishment \n"))
-
-with open(MP, 'r') as file:
-    MD = json.load(file)
-
-
-with open(PP, 'r') as File:
-    PD= json.load(File)
-
-
-
-offense=str(input("Enter the Description of offense happened \n"))
-off=[]
-off.append(offense)
-lab=[0]
 
 train_dataset = TextDataset(off, lab, tokenizer)
 train_dataset=train_dataset[0]
