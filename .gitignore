@@ -1,1 +1,3 @@
 ipc_sections.csv
+model\Model.pth
+model\Train.csv
