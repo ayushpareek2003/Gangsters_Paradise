@@ -1,9 +1,12 @@
-Gangsters Paradise
-Gangsters Paradise is a machine learning model designed to predict the relevant Indian Penal Code (IPC) section based on user-provided descriptions.
+## Gangsters Paradise
 
-Requirements
-To use this service, ensure you have the required Python packages installed. You can install the dependencies listed in requirements.txt using:
+**Gangsters Paradise** is a machine learning model designed to predict the relevant Indian Penal Code (IPC) section based on user-provided descriptions.
 
+### Requirements
+
+To use this service, ensure you have the required Python packages installed. You can install the dependencies listed in `requirements.txt` using:
+
+```bash
 pip install -r requirements.txt
 
 
