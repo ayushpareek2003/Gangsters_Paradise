@@ -4,10 +4,10 @@
 
 ### Requirements
 
-To use this service, ensure you have the required Python packages installed. You can install the dependencies listed in `requirements.txt` using:
+To use this service, ensure you have the required Python packages installed. You can install the dependencies listed in `environment.txt` using:
 
 ```bash
-pip install -r requirements.txt
+pip install -r environment.txt
 ```
 
 You will also need to download the following resources:
