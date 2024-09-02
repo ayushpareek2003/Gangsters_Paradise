@@ -8,7 +8,7 @@ To use this service, ensure you have the required Python packages installed. You
 
 ```bash
 pip install -r requirements.txt
-
+```
 
 You will also need to download the following resources:
 
