@@ -3,6 +3,7 @@ from transformers import BertTokenizer
 from torch.utils.data import Dataset
 import json
 import warnings
+from huggingface_hub import hf_hub_download
 warnings.filterwarnings("ignore")
 
 
@@ -42,15 +43,15 @@ class TextDataset(Dataset):
         }
     
 def infer(text):
-        model=torch.load("D:\\PRojects\\Gangsters_Paradise\\model\\Model.pth")
+        REPO_ID = "ayushml/IPC_Detector"
+
+        # Load model and tokenizer
+        model_path = hf_hub_download(repo_id=REPO_ID, filename="Model.pth")
+        model = torch.load(model_path)
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-        with open("D:\\PRojects\\Gangsters_Paradise\\Dataset_AUG\\Mapping.json", 'r') as file:
-            MD = json.load(file)
-
-
-        with open("D:\\PRojects\\Gangsters_Paradise\\Dataset_AUG\\Punishment.json", 'r') as File:
-            PD= json.load(File)
+        MD = hf_hub_download(repo_id=REPO_ID, filename="Mapping.json")
+        PD = hf_hub_download(repo_id=REPO_ID, filename="Punishment.json")
         off=[]
         off.append(text)
         lab=[0]   
