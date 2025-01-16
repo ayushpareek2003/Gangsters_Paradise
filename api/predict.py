@@ -1,0 +1,74 @@
+import torch
+from transformers import BertTokenizer
+from torch.utils.data import Dataset
+import json
+import warnings
+warnings.filterwarnings("ignore")
+
+
+### same class which was in backend ####
+class TextDataset(Dataset):
+    def __init__(self, texts, labels, tokenizer, max_len=128):
+        self.texts = texts
+        self.labels = labels
+        self.tokenizer = tokenizer
+        self.max_len = max_len
+
+
+
+    def __len__(self):
+        return len(self.texts)
+
+    def __getitem__(self, idx):
+        text = self.texts[idx]
+        label = self.labels[idx]
+
+        encoding = self.tokenizer.encode_plus(
+            text,
+            add_special_tokens=True,
+            max_length=self.max_len,
+            padding='max_length',
+            truncation=True,
+            return_tensors='pt'
+        )
+        
+        input_ids = encoding['input_ids'].squeeze()
+        attention_mask = encoding['attention_mask'].squeeze()
+        
+        return {
+            'input_ids': input_ids,
+            'attention_mask': attention_mask,
+            'labels': torch.tensor(label, dtype=torch.long)
+        }
+    
+def infer(text):
+        model=torch.load("D:\\PRojects\\Gangsters_Paradise\\model\\Model.pth")
+        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+
+        with open("D:\\PRojects\\Gangsters_Paradise\\Dataset_AUG\\Mapping.json", 'r') as file:
+            MD = json.load(file)
+
+
+        with open("D:\\PRojects\\Gangsters_Paradise\\Dataset_AUG\\Punishment.json", 'r') as File:
+            PD= json.load(File)
+        off=[]
+        off.append(text)
+        lab=[0]   
+        train_dataset = TextDataset(off, lab, tokenizer)
+
+        train_dataset=train_dataset[0]
+        input_ids = train_dataset['input_ids'].unsqueeze(0)
+        attention_mask = train_dataset['attention_mask'].unsqueeze(0)
+
+        model.to(torch.device('cpu'))
+        with torch.no_grad():
+            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+            logits = outputs.logits  
+
+        predicted_label = torch.argmax(logits, dim=-1).item()
+
+        return MD[str(predicted_label)],"  is applicable in this situation and punishment for such crime is  ",PD[str(predicted_label)] 
+
+
+
+    
