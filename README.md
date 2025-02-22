@@ -1,4 +1,4 @@
-## Gangsters Paradise
+## Gangsters Paradise (IPC Detection)
 
 **Gangsters Paradise** is a machine learning model designed to predict the relevant Indian Penal Code (IPC) section based on user-provided descriptions.
 
