@@ -55,10 +55,6 @@ class BERTLSTMClassifier(nn.Module):
         lstm_out, _ = self.lstm(bert_output.last_hidden_state)
         output = self.fc(lstm_out[:, -1, :])
         return output
-    
-
-
-
 
 def train(model,device,train_loader,optimizer,num_epochs=5):
     num_epochs = 3
