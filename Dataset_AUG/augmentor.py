@@ -23,9 +23,6 @@ class marian_loader():
 
             self.model_left_flow.append(MarianMTModel.from_pretrained(f'Helsinki-NLP/opus-mt-{self.languages[i+1]}-{self.languages[i]}'))
             self.tokenizer_left_flow.append(MarianTokenizer.from_pretrained(f'Helsinki-NLP/opus-mt-{self.languages[i+1]}-{self.languages[i]}'))
-
-
-
             ##individual model
             self.model_right_individual.append(MarianMTModel.from_pretrained(f'Helsinki-NLP/opus-mt-{"en"}-{self.languages[i+1]}'))
             self.tokenizer_right_individual.append(MarianTokenizer.from_pretrained(f'Helsinki-NLP/opus-mt-{"en"}-{self.languages[i+1]}'))
